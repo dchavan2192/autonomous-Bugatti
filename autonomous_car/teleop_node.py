@@ -1,6 +1,6 @@
 import rclpy
 from rclpy.node import Node
-from std_msgs.msg import String
+from std_msgs.msg import String, Float32
 import sys
 import tty
 import termios
@@ -9,9 +9,11 @@ import select
 class TeleopNode(Node):
     def __init__(self):
         super().__init__('teleop_node')
-        self.publisher = self.create_publisher(String, 'car_command', 10)
+        self.cmd_publisher = self.create_publisher(String, 'car_command', 10)
+        self.steering_publisher = self.create_publisher(Float32, 'steering_angle', 10)
+        self.current_angle = 0.0
         self.get_logger().info('Teleop node started!')
-        self.get_logger().info('Hold W=Forward S=Backward A=Left D=Right Space=Stop Q=Quit')
+        self.get_logger().info('W=Forward S=Backward A=Left D=Right Space=Stop Q=Quit')
 
     def get_key(self):
         tty.setraw(sys.stdin.fileno())
@@ -20,36 +22,42 @@ class TeleopNode(Node):
         termios.tcsetattr(sys.stdin, termios.TCSADRAIN, self.settings)
         return key
 
+    def publish_steering(self, angle):
+        angle = max(-90.0, min(90.0, angle))
+        self.current_angle = angle
+        msg = Float32()
+        msg.data = angle
+        self.steering_publisher.publish(msg)
+
+    def publish_drive(self, command):
+        msg = String()
+        msg.data = command
+        self.cmd_publisher.publish(msg)
+
     def run(self):
         self.settings = termios.tcgetattr(sys.stdin)
-        last_command = ''
         try:
             while True:
                 key = self.get_key()
-                msg = String()
+
                 if key == 'w':
-                    msg.data = 'FORWARD'
+                    self.publish_drive('FORWARD')
                 elif key == 's':
-                    msg.data = 'BACKWARD'
+                    self.publish_drive('BACKWARD')
                 elif key == 'a':
-                    msg.data = 'LEFT'
+                    self.publish_steering(self.current_angle - 25.0)
                 elif key == 'd':
-                    msg.data = 'RIGHT'
+                    self.publish_steering(self.current_angle + 25.0)
                 elif key == ' ':
-                    msg.data = 'STOP'
+                    self.publish_drive('STOP')
+                    self.publish_steering(0.0)
                 elif key == 'q':
-                    msg.data = 'STOP'
-                    self.publisher.publish(msg)
+                    self.publish_drive('STOP')
+                    self.publish_steering(0.0)
                     break
                 elif key == '':
-                    msg.data = 'STOP'
-                else:
-                    continue
+                    self.publish_drive('STOP')
 
-                if msg.data != last_command:
-                    self.publisher.publish(msg)
-                    self.get_logger().info(f'Sent: {msg.data}')
-                    last_command = msg.data
         finally:
             termios.tcsetattr(sys.stdin, termios.TCSADRAIN, self.settings)
 

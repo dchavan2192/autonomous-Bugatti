@@ -22,12 +22,12 @@ setup(
             'pytest',
         ],
     },
-
     entry_points={
         'console_scripts': [
             'serial_node = autonomous_car.serial_node:main',
             'teleop_node = autonomous_car.teleop_node:main',
             'camera_node = autonomous_car.camera_node:main',
+            'servo_node = autonomous_car.servo_node:main',
         ],
     },
 )
