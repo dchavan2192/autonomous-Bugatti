@@ -36,14 +36,19 @@ class TeleopNode(Node):
 
     def run(self):
         self.settings = termios.tcgetattr(sys.stdin)
+        last_command = ''
         try:
             while True:
                 key = self.get_key()
 
                 if key == 'w':
-                    self.publish_drive('FORWARD')
+                    if last_command != 'FORWARD':
+                        self.publish_drive('FORWARD')
+                        last_command = 'FORWARD'
                 elif key == 's':
-                    self.publish_drive('BACKWARD')
+                    if last_command != 'BACKWARD':
+                        self.publish_drive('BACKWARD')
+                        last_command = 'BACKWARD'
                 elif key == 'a':
                     self.publish_steering(self.current_angle - 25.0)
                 elif key == 'd':
@@ -51,12 +56,15 @@ class TeleopNode(Node):
                 elif key == ' ':
                     self.publish_drive('STOP')
                     self.publish_steering(0.0)
+                    last_command = 'STOP'
                 elif key == 'q':
                     self.publish_drive('STOP')
                     self.publish_steering(0.0)
                     break
                 elif key == '':
-                    self.publish_drive('STOP')
+                    if last_command != 'STOP':
+                        self.publish_drive('STOP')
+                        last_command = 'STOP'
 
         finally:
             termios.tcsetattr(sys.stdin, termios.TCSADRAIN, self.settings)
