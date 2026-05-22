@@ -62,10 +62,7 @@ class TeleopNode(Node):
                     self.publish_steering(0.0)
                     break
                 elif key == '':
-                    if last_command != 'STOP':
-                        self.publish_drive('STOP')
-                        last_command = 'STOP'
-
+                    pass             
         finally:
             termios.tcsetattr(sys.stdin, termios.TCSADRAIN, self.settings)
 

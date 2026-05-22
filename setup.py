@@ -30,6 +30,8 @@ setup(
             'camera_node = autonomous_car.camera_node:main',
             'servo_node = autonomous_car.servo_node:main',
             'safety_node = autonomous_car.safety_node:main',
+            'line_follower_node = autonomous_car.line_follower_node:main',
+            'detection_node = autonomous_car.detection_node:main',
         ],
     },
 )
