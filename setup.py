@@ -32,6 +32,13 @@ setup(
             'safety_node = autonomous_car.safety_node:main',
             'line_follower_node = autonomous_car.line_follower_node:main',
             'detection_node = autonomous_car.detection_node:main',
+            'explorer_node = autonomous_car.explorer_node:main',
+            'llm_navigator_node = autonomous_car.llm_navigator_node:main',
+            'data_collector_node = autonomous_car.data_collector_node:main',
+            'policy_node = autonomous_car.policy_node:main',
+            'parking_detector_node = autonomous_car.parking_detector_node:main',
+            'parking_collector_node = autonomous_car.parking_collector_node:main',
+            'parking_policy_node = autonomous_car.parking_policy_node:main',
         ],
     },
 )

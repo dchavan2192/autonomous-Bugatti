@@ -15,10 +15,6 @@ def generate_launch_description():
             name='servo_node',
             output='screen'
         ),
-        Node(
-            package='autonomous_car',
-            executable='camera_node',
-            name='camera_node',
-            output='screen'
-        ),
+        # camera_node removed — detection_node opens /dev/video0 directly.
+        # Run camera_node only for teleop/streaming without detection.
     ])

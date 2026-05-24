@@ -63,7 +63,8 @@ class DetectionNode(Node):
                                 label = COCO_CLASSES[class_id] if class_id < len(COCO_CLASSES) else 'unknown'
                                 detections.append({
                                     'label': label,
-                                    'confidence': round(confidence, 2)
+                                    'confidence': round(confidence, 2),
+                                    'bbox': [float(det[0]), float(det[1]), float(det[2]), float(det[3])]
                                 })
 
                 if detections:
